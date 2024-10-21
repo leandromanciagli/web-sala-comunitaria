@@ -1,0 +1,127 @@
+<!-- Modal Gestionar Materia prima -->
+<ng-template #modalGestionMateriaPrima let-modal>
+    <div class="modal-header">
+        <h1 class="modal-title fs-5 main-color">
+            <ng-container *ngIf="!isUpdate(); else updateTitle">
+                <b>Registrar materia prima</b>
+            </ng-container>
+            <ng-template #updateTitle>
+                <b>Editar materia prima</b>
+            </ng-template>
+        </h1>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModalGestionMateriaPrima()"></button>
+    </div>
+    <form [formGroup]="materiaPrimaForm" (ngSubmit)="manageMateriaPrima()" autocomplete="off">
+        <div class="modal-body px-5 d-flex flex-column gap-3">
+            <div class="row">
+                <div class="col">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" formControlName="nombre">
+                    <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" class="alert">
+                        <div *ngIf="nombre.hasError('required')">
+                            El nombre es requerido.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="unidadDeMedida" class="form-label">Unidad de medida</label>
+                    <select class="form-select" id="unidadDeMedida" formControlName="unidadDeMedida">
+                        <option *ngFor="let unidadDeMedida of unidadesDeMedida" [value]="unidadDeMedida.unidadDeMedidaId">{{ unidadDeMedida.denominacion }}</option>
+                    </select>
+                    <div *ngIf="unidadDeMedida.invalid && (unidadDeMedida.dirty || unidadDeMedida.touched)" class="alert">
+                        <div *ngIf="unidadDeMedida.hasError('required')">
+                            Unidad de medida es requerida.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="tipoMateriaPrima" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipoMateriaPrima" formControlName="tipo">
+                        <option *ngFor="let tipo of tiposMateriaPrima" [value]="tipo.tipoMateriaPrimaId">{{ tipo.nombre }}</option>
+                    </select>
+                    <div *ngIf="tipo.invalid && (tipo.dirty || tipo.touched)" class="alert">
+                        <div *ngIf="tipo.hasError('required')">
+                            El tipo es requerido.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="descripcion" class="form-label">Descripción</label>
+                    <textarea type="text" class="form-control" id="descripcion" formControlName="descripcion"></textarea>
+                    <div *ngIf="descripcion.invalid && (descripcion.dirty || descripcion.touched)" class="alert">
+                        <div *ngIf="descripcion.hasError('maxlength')">
+                            La descripción no puede superar los 255 caracteres.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModalGestionMateriaPrima()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" ngbAutofocus [disabled]="!materiaPrimaForm.valid">
+                <ng-container *ngIf="!isUpdate(); else updateAction">
+                    Registrar materia prima
+                </ng-container>
+                <ng-template #updateAction>
+                    Editar materia prima
+                </ng-template>
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2 class="m-0 main-color"><b>Materias primas</b></h2>
+    <button 
+        type="button"
+        class="d-flex align-items-center gap-2 btn btn-primary bg-accent-color text-white" 
+        (click)="openModalGestionMateriaPrima(modalGestionMateriaPrima)"
+    >
+        <img src="ico-plus.png" style="width: 30px; height: auto;">
+        <b>Registrar materia prima</b>
+    </button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Tipo</th>
+            <th class="text-center">Cantidad actual</th>
+            <th class="text-center">Unidad de medida</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let materiaPrima of materiasPrimas">
+            <td class="align-middle text-center">{{ materiaPrima.nombre }}</td>
+            <td class="align-middle text-center">{{ materiaPrima.tipo.nombre }}</td>
+            <td class="align-middle text-center">{{ materiaPrima.cantidad }}</td>
+            <td class="align-middle text-center">{{ materiaPrima.unidadDeMedida.abreviatura }}</td>
+            <td class="d-flex justify-content-center gap-2">
+                <!-- <button type="button" class="btn btn-primary btn-circle" data-bs-dismiss="modal">
+                    <img src="ico-view.png">
+                </button> -->
+                <button 
+                    type="button" 
+                    class="btn btn-circle btn-primary"
+                    ngbTooltip="Editar materia prima" placement="top"
+                    (click)="openModalGestionMateriaPrima(modalGestionMateriaPrima, materiaPrima)"
+                >
+                    <img src="ico-edit.png">
+                </button>
+                <button 
+                    type="button" 
+                    class="btn btn-circle btn-warning"
+                    ngbTooltip="Eliminar materia prima" placement="top"
+                    (click)="deleteMateriaPrima(materiaPrima)"
+                >
+                    <img src="ico-delete.png">
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

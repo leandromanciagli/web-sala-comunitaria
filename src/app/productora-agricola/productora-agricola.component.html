@@ -1,0 +1,117 @@
+<!-- Modal Registrar Productora agrícola -->
+<ng-template #modalGestionProductoraAgricola let-modal>
+    <div class="modal-header">
+        <h1 class="modal-title fs-5 main-color">
+            <ng-container *ngIf="!productoraAgricolaIdSeleccionada; else updateTitle">
+                <b>Registrar productora agrícola</b>
+            </ng-container>
+            <ng-template #updateTitle>
+                <b>Editar productora agrícola</b>
+            </ng-template>
+        </h1>
+        <button type="button" class="btn-close" (click)="closeModalGestionProductoraAgricola()"></button>
+    </div>
+    <form [formGroup]="productoraAgricolaForm" (ngSubmit)="manageProductoraAgricola()" autocomplete="off">
+        <div class="modal-body px-5 d-flex flex-column gap-3">
+            <div class="row">
+                <div class="col">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" formControlName="nombre">
+                    <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" class="alert">
+                        <div *ngIf="nombre.hasError('required')">
+                            El nombre es requerido.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="direccion" class="form-label">Dirección</label>
+                    <input type="direccion" class="form-control" id="direccion" formControlName="direccion">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" formControlName="telefono">
+                    <div *ngIf="telefono.invalid && (telefono.dirty || telefono.touched)" class="alert">
+                        <div *ngIf="telefono.hasError('pattern')">
+                            El teléfono sólo puede contener números.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" formControlName="email">
+                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert">
+                        <div *ngIf="email.hasError('email')">
+                            El email es inválido.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModalGestionProductoraAgricola()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" ngbAutofocus [disabled]="!productoraAgricolaForm.valid">
+                <ng-container *ngIf="!productoraAgricolaIdSeleccionada; else updateAction">
+                    Registrar productora agrícola
+                </ng-container>
+                <ng-template #updateAction>
+                    Editar productora agrícola
+                </ng-template>
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2 class="m-0 main-color"><b>Productoras agrícolas</b></h2>
+    <button 
+        type="button" 
+        class="d-flex align-items-center gap-2 btn btn-primary bg-accent-color text-white"
+        (click)="openModalGestionProductoraAgricola(modalGestionProductoraAgricola)"
+    >
+        <img src="ico-plus.png" style="width: 30px; height: auto;">
+        <b>Registrar productora agrícola</b>
+    </button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Dirección</th>
+            <th class="text-center">Teléfono</th>
+            <th class="text-center">Email</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let productoraAgricola of productorasAgricolas">
+            <td class="align-middle text-center">{{ productoraAgricola.nombre }}</td>
+            <td class="align-middle text-center">{{ productoraAgricola.direccion ? productoraAgricola.direccion : '-' }}</td>
+            <td class="align-middle text-center">{{ productoraAgricola.telefono ? productoraAgricola.telefono : '-' }}</td>
+            <td class="align-middle text-center">{{ productoraAgricola.email ? productoraAgricola.email : '-' }}</td>
+            <td class="d-flex justify-content-center gap-2">
+                <!-- <button type="button" class="btn btn-primary btn-circle" data-bs-dismiss="modal">
+                    <img src="ico-view.png">
+                </button> -->
+                <button 
+                    type="button" 
+                    class="btn btn-circle btn-primary"
+                    ngbTooltip="Editar productora agrícola" placement="top"
+                    (click)="openModalGestionProductoraAgricola(modalGestionProductoraAgricola, productoraAgricola)"
+                >
+                    <img src="ico-edit.png">
+                </button>
+                <button 
+                    type="button" 
+                    class="btn btn-circle btn-warning"
+                    ngbTooltip="Eliminar productora agrícola" placement="top"
+                    (click)="deleteProductoraAgricola(productoraAgricola)"
+                >
+                    <img src="ico-delete.png">
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

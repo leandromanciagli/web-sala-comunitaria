@@ -1,0 +1,179 @@
+<!-- Modal Registrar Ingreso de materia prima -->
+<ng-template #modalGestionIngresoMateriaPrima let-modal>
+    <div class="modal-header">
+        <h1 class="modal-title fs-5 main-color">
+            <b>Registrar ingreso de materia prima</b>
+        </h1>
+        <button type="button" class="btn-close" (click)="closeModalGestionIngresoMateriaPrima()"></button>
+    </div>
+    <form [formGroup]="ingresoMateriaPrimaForm" (ngSubmit)="manageIngresoMateriaPrima()" autocomplete="off">
+        <div class="modal-body px-5 d-flex flex-column gap-3">
+            <div class="row">
+                <div class="col">
+                    <label for="fechaDeIngreso" class="form-label">Fecha de ingreso</label>
+                    <div class="input-group">
+                        <input 
+                            class="form-control" 
+                            id="fechaDeIngreso" 
+                            name="fechaDeIngreso" 
+                            formControlName="fechaDeIngreso"
+                            (click)="fIngreso.toggle()" 
+                            ngbDatepicker
+                            #fIngreso="ngbDatepicker"
+                        />
+                        <span class="input-group-text">
+                            <img src="ico-calendar.png">
+                        </span>
+                    </div>
+                    <div *ngIf="fechaDeIngreso.invalid && (fechaDeIngreso.dirty || fechaDeIngreso.touched)" class="alert">
+                        <div *ngIf="fechaDeIngreso.hasError('required')">
+                            La fecha de ingreso es requerida.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="productoraAgricola" class="form-label">Productora agrícola</label>
+                    <select class="form-select" id="productoraAgricola" formControlName="productoraAgricola">
+                        <option *ngFor="let productoraAgricola of productorasAgricolas"
+                            [value]="productoraAgricola.productoraAgricolaId">{{ productoraAgricola.nombre }}</option>
+                    </select>
+                    <div *ngIf="productoraAgricola.invalid && (productoraAgricola.dirty || productoraAgricola.touched)" class="alert">
+                        <div *ngIf="productoraAgricola.hasError('required')">
+                            La productora agrícola es requerida.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="materiaPrima" class="form-label">Materia prima</label>
+                    <select 
+                        class="form-select" 
+                        id="materiaPrima" 
+                        formControlName="materiaPrima" 
+                        (ngModelChange)="resetCantidad($event)"
+                    >
+                        <option *ngFor="let materiaPrima of materiasPrimas" [ngValue]="materiaPrima.materiaPrimaId">{{ materiaPrima.nombre }}</option>
+                    </select>
+                    <div *ngIf="materiaPrima.invalid && (materiaPrima.dirty || materiaPrima.touched)" class="alert">
+                        <div *ngIf="materiaPrima.hasError('required')">
+                            La materia prima es requerida.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input 
+                        type="number" 
+                        [placeholder]="materiaPrimaSeleccionada ? 'Ingresar cantidad en ' + materiaPrimaSeleccionada.unidadDeMedida.abreviatura : ''" 
+                        class="form-control" 
+                        id="cantidad" 
+                        formControlName="cantidad"
+                    />
+                    <div *ngIf="cantidad.invalid && (cantidad.dirty || cantidad.touched)" class="alert">
+                        <div *ngIf="cantidad.hasError('required')">
+                            La cantidad es requerida.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="modoAlmacenamiento" class="form-label">Almacenamiento actual</label>
+                    <select class="form-select" id="modoAlmacenamiento" formControlName="modoAlmacenamiento">
+                        <option *ngFor="let modoAlmacenamiento of modosDeAlmacenamiento"
+                            [value]="modoAlmacenamiento.modoAlmacenamientoId">{{ modoAlmacenamiento.nombre }}</option>
+                    </select>
+                    <div *ngIf="modoAlmacenamiento.invalid && (modoAlmacenamiento.dirty || modoAlmacenamiento.touched)"
+                        class="alert">
+                        <div *ngIf="modoAlmacenamiento.hasError('required')">
+                            El modo de almacenamiento es requerido.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="fechaDeAlmacenamiento" class="form-label">Fecha de almacenamiento</label>
+                    <div class="input-group">
+                        <input class="form-control" id="fechaDeAlmacenamiento" formControlName="fechaDeAlmacenamiento"
+                            (click)="fAlmacenamiento.toggle()" ngbDatepicker #fAlmacenamiento="ngbDatepicker" />
+                        <span class="input-group-text">
+                            <img src="ico-calendar.png">
+                        </span>
+                    </div>
+                    <div *ngIf="fechaDeAlmacenamiento.invalid && (fechaDeAlmacenamiento.dirty || fechaDeAlmacenamiento.touched)"
+                        class="alert">
+                        <div *ngIf="fechaDeAlmacenamiento.hasError('required')">
+                            La fecha de almacenamiento es requerida.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="agroecologico" class="form-label">Agroecológico</label>
+                    <select class="form-select" id="agroecologico" formControlName="agroecologico">
+                        <option value="S" selected>Si</option>
+                        <option value="N">No</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="fechaDeCosecha" class="form-label">Fecha de cosecha</label>
+                    <div class="input-group">
+                        <input 
+                            class="form-control" 
+                            id="fechaDeCosecha" 
+                            formControlName="fechaDeCosecha"
+                            (click)="fCosecha.toggle()" 
+                            ngbDatepicker 
+                            #fCosecha="ngbDatepicker" 
+                        />
+                        <span class="input-group-text">
+                            <img src="ico-calendar.png">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModalGestionIngresoMateriaPrima()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" ngbAutofocus [disabled]="!ingresoMateriaPrimaForm.valid">
+                Registrar ingreso de materia prima
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2 class="m-0 main-color"><b>Ingresos de materia prima</b></h2>
+    <button 
+        type="button" 
+        class="d-flex align-items-center gap-2 btn btn-primary bg-accent-color text-white"
+        (click)="openModalGestionIngresoMateriaPrima(modalGestionIngresoMateriaPrima)"
+    >
+        <img src="ico-plus.png" style="width: 30px; height: auto;">
+        <b>Registrar ingreso de materia prima</b>
+    </button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Fecha de ingreso</th>
+            <th class="text-center">Productora agrícola</th>
+            <th class="text-center">Materia prima</th>
+            <th class="text-center">Cantidad ingresada</th>
+            <th class="text-center">Almacenamiento actual</th>
+            <th class="text-center">Fecha de almacenamiento</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let ingresoMateriaPrima of ingresosMateriaPrima">
+            <td class="align-middle text-center">{{ ingresoMateriaPrima.fechaDeIngreso | formatDate }}</td>
+            <td class="align-middle text-center">{{ ingresoMateriaPrima.productoraAgricola.nombre }}</td>
+            <td class="align-middle text-center">{{ ingresoMateriaPrima.materiaPrima.nombre }}</td>
+            <td class="align-middle text-center">{{ ingresoMateriaPrima.cantidad }}</td>
+            <td class="align-middle text-center">{{ ingresoMateriaPrima.modoAlmacenamiento.nombre }}</td>
+            <td class="align-middle text-center">{{ ingresoMateriaPrima.fechaDeAlmacenamiento | formatDate }}</td>
+        </tr>
+    </tbody>
+</table>
